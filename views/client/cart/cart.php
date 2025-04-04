@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-xxl-12">
                     <div class="breadcrumb__content p-relative z-index-1">
-                        <h3 class="breadcrumb__title">Giỏ hàng</h3>
+                        <h3 class="breadcrumb__title">Giỏ hàng sản phẩm</h3>
                         <div class="breadcrumb__list">
                             <span><a href="index.php">Trang chủ</a></span>
                             <span>Giỏ hàng</span>
