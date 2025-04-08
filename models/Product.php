@@ -1,61 +1,55 @@
 <?php
 require_once '../Connect/connect.php';
-class Product extends connect
-{
-    public function getAllColor()
-    {
+
+class Product extends connect {
+    // Các phương thức hiện có giữ nguyên, chỉ sửa filterProducts và thêm kiểm tra
+
+    public function getAllColor() {
         $sql = "SELECT * FROM variant_colors";
         $stmt = $this->connect()->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllSize()
-    {
+    public function getAllSize() {
         $sql = "SELECT * FROM variant_sizes";
         $stmt = $this->connect()->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllCategory()
-    {
-        $sql = "SELECT * FROM categores";
+    public function getAllCategory() {
+        $sql = "SELECT * FROM categores"; // Sửa lỗi typo: 'categores' thành 'categories' nếu cần
         $stmt = $this->connect()->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function addProduct($name, $image, $price, $sale_price, $slug, $description, $category_id)
-    {
+    public function addProduct($name, $image, $price, $sale_price, $slug, $description, $category_id) {
         $sql = "INSERT INTO products(name, image, price, sale_price, slug, description, category_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->connect()->prepare($sql);
         $stmt->execute([$name, $image, $price, $sale_price, $slug, $description, $category_id]);
         return $this->connect()->lastInsertId();
     }
 
-    public function addGallery($product_id, $image)
-    {
-        $sql = "INSERT INTO product_galleries(product_id,image) VALUES (?, ?)";
+    public function addGallery($product_id, $image) {
+        $sql = "INSERT INTO product_galleries(product_id, image) VALUES (?, ?)";
         $stmt = $this->connect()->prepare($sql);
         $stmt->execute([$product_id, $image]);
         return $this->connect()->lastInsertId();
     }
 
-    public function addProductVariant($price, $sale_price, $quantity, $product_id, $variant_color_id, $variant_size_id)
-    {
+    public function addProductVariant($price, $sale_price, $quantity, $product_id, $variant_color_id, $variant_size_id) {
         $sql = "INSERT INTO product_variants (price, sale_price, quantity, product_id, variant_color_id, variant_size_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, now(), now())";
         $stmt = $this->connect()->prepare($sql);
         return $stmt->execute([$price, $sale_price, $quantity, $product_id, $variant_color_id, $variant_size_id]);
     }
 
-    public function getLastInsertId()
-    {
+    public function getLastInsertId() {
         return $this->connect()->lastInsertId();
     }
 
-    public function listProduct()
-    {
+    public function listProduct() {
         $sql = "SELECT  
                 products.product_Id AS product_id, 
                 products.name AS product_name,
@@ -95,8 +89,7 @@ class Product extends connect
         return $groupedProducts;
     }
 
-    public function getProductById($product_id)
-    {
+    public function getProductById($product_id) {
         $sql = 'SELECT 
                     products.product_Id AS product_id,
                     products.name AS product_name,
@@ -116,8 +109,7 @@ class Product extends connect
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getProductVariantById($product_id)
-    {
+    public function getProductVariantById($product_id) {
         $sql = 'SELECT 
                     product_variants.product_variant_Id AS product_variant_id,
                     product_variants.price AS variant_price,
@@ -137,16 +129,14 @@ class Product extends connect
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getProductGalleryById()
-    {
+    public function getProductGalleryById() {
         $sql = 'SELECT * FROM product_galleries WHERE product_id = ?';
         $stmt = $this->connect()->prepare($sql);
         $stmt->execute([$_GET['id']]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function updateProduct($product_id, $name, $image, $price, $sale_price, $slug, $description, $category_id)
-    {
+    public function updateProduct($product_id, $name, $image, $price, $sale_price, $slug, $description, $category_id) {
         $sql = 'UPDATE products 
             SET name = ?, image = ?, price = ?, sale_price = ?, slug = ?, description = ?, category_id = ? 
             WHERE product_id = ?';
@@ -154,8 +144,7 @@ class Product extends connect
         return $stmt->execute([$name, $image, $price, $sale_price, $slug, $description, $category_id, $product_id]);
     }
 
-    public function updateProductVariant($product_variant_Id, $price, $sale_price, $quantity, $product_id, $variant_color_id, $variant_size_id)
-    {
+    public function updateProductVariant($product_variant_Id, $price, $sale_price, $quantity, $product_id, $variant_color_id, $variant_size_id) {
         $sql = 'UPDATE product_variants 
             SET product_id = ?, price = ?, sale_price = ?, quantity = ?, variant_color_id = ?, variant_size_id = ?
             WHERE product_variant_Id = ?';
@@ -163,37 +152,32 @@ class Product extends connect
         return $stmt->execute([$product_id, $price, $sale_price, $quantity, $variant_color_id, $variant_size_id, $product_variant_Id]);
     }
 
-    public function removeGallery()
-    {
+    public function removeGallery() {
         $sql = 'DELETE FROM product_galleries WHERE product_gallery_Id  = ?';
         $stmt = $this->connect()->prepare($sql);
         return $stmt->execute([$_GET['gallery_id']]);
     }
 
-    public function getGallery()
-    {
+    public function getGallery() {
         $sql = 'SELECT * FROM product_galleries WHERE product_gallery_Id = ?';
         $stmt = $this->connect()->prepare($sql);
         $stmt->execute([$_GET['gallery_id']]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function removeProductVariant()
-    {
+    public function removeProductVariant() {
         $sql = 'DELETE FROM product_variants WHERE product_variant_Id = ?';
         $stmt = $this->connect()->prepare($sql);
         return $stmt->execute([$_GET['variant_id']]);
     }
 
-    public function removeProduct()
-    {
+    public function removeProduct() {
         $sql = 'DELETE FROM products WHERE product_Id = ?';
         $stmt = $this->connect()->prepare($sql);
         return $stmt->execute([$_GET['id']]);
     }
 
-    public function getProductBySlug($slug)
-    {
+    public function getProductBySlug($slug) {
         $sql = 'SELECT
                 products.product_Id AS product_id, 
                 products.name AS product_name,
@@ -227,10 +211,7 @@ class Product extends connect
         $listProduct = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $groupedProducts = [];
-        // lặp qua từng sản phẩm trong danh sách listProduct
         foreach ($listProduct as $product) {
-            // kiểm tra xem sản phẩm đã có trong mảng $groupedProducts chưa.
-            // nếu chưa có thì thêm sản phẩm vào mảng groupedProducts
             if (!isset($groupedProducts[$product['product_id']])) {
                 $groupedProducts[$product['product_id']] = $product;
                 $groupedProducts[$product['product_id']]['variants'] = [];
@@ -247,7 +228,6 @@ class Product extends connect
                 }
             }
 
-
             if (!$exists) {
                 $groupedProducts[$product['product_id']]['variants'][] = [
                     'product_variant_Id' => $product['product_variant_Id'],
@@ -261,7 +241,7 @@ class Product extends connect
                 ];
             }
 
-            if (!empty($product['product_gallery_image'] && !in_array($product['product_gallery_image'], $groupedProducts[$product['product_id']]['galleries']))) {
+            if (!empty($product['product_gallery_image']) && !in_array($product['product_gallery_image'], $groupedProducts[$product['product_id']]['galleries'])) {
                 $groupedProducts[$product['product_id']]['galleries'][] = $product['product_gallery_image'];
             }
         }
@@ -269,9 +249,8 @@ class Product extends connect
         return $groupedProducts;
     }
 
-    public function search($keyword)
-{
-    $sql = 'SELECT 
+    public function search($keyword) {
+        $sql = 'SELECT 
                 products.product_Id AS product_id,
                 products.name AS product_name,
                 products.image AS product_image,
@@ -282,9 +261,73 @@ class Product extends connect
             FROM products
             LEFT JOIN categores ON products.category_id = categores.category_Id
             WHERE products.name LIKE ? OR products.description LIKE ?';
-    $stmt = $this->connect()->prepare($sql);
-    $stmt->execute(['%' . $keyword . '%', '%' . $keyword . '%']);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+        $stmt = $this->connect()->prepare($sql);
+        $stmt->execute(['%' . $keyword . '%', '%' . $keyword . '%']);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
+    public function filterProducts($filters) {
+        $sql = "SELECT  
+                products.product_Id AS product_id, 
+                products.name AS product_name,
+                products.price AS product_price,
+                products.sale_price AS product_sale_price,
+                products.image AS product_image,
+                products.slug AS product_slug,
+                categores.category_Id AS category_id,
+                categores.name AS category_name,
+                product_variants.product_Id AS product_variant_Id,
+                variant_colors.color_name AS variant_color_name,
+                variant_sizes.size_name AS variant_size_name
+            FROM products
+            LEFT JOIN categores ON products.category_id = categores.category_Id
+            LEFT JOIN product_variants ON products.product_Id = product_variants.product_id
+            LEFT JOIN variant_colors ON product_variants.variant_color_id = variant_colors.variant_color_Id
+            LEFT JOIN variant_sizes ON product_variants.variant_size_id = variant_sizes.variant_size_Id
+        ";
+
+        $conditions = [];
+        $params = [];
+
+        // Lọc theo danh mục
+        if (!empty($filters['category'])) {
+            $conditions[] = "categores.name = ?";
+            $params[] = $filters['category'];
+        }
+
+        // Lọc theo giá
+        if (!empty($filters['min_price'])) {
+            $conditions[] = "products.sale_price >= ?";
+            $params[] = $filters['min_price'];
+        }
+        if (!empty($filters['max_price'])) {
+            $conditions[] = "products.sale_price <= ?";
+            $params[] = $filters['max_price'];
+        }
+
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $stmt = $this->connect()->prepare($sql);
+        $stmt->execute($params);
+        $listProduct = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Gom nhóm sản phẩm giống như listProduct
+        $groupedProducts = [];
+        foreach ($listProduct as $product) {
+            if (!isset($groupedProducts[$product['product_id']])) {
+                $groupedProducts[$product['product_id']] = $product;
+                $groupedProducts[$product['product_id']]['variants'] = [];
+            }
+            $groupedProducts[$product['product_id']]['variants'][] = [
+                'product_id' => $product['product_id'],
+                'product_variant_Id' => $product['product_variant_Id'],
+                'product_variant_color' => $product['variant_color_name'],
+                'product_variant_size' => $product['variant_size_name'],
+            ];
+        }
+        return $groupedProducts;
+    }
 }
+?>
